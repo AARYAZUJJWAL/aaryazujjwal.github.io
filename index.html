@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ujjwal Kumar — PhD Candidate, IIT Madras</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0f1117;
+    --ink-2: #3a3d4a;
+    --ink-3: #6b7080;
+    --surface: #f5f3ee;
+    --surface-2: #eceae4;
+    --white: #ffffff;
+    --accent: #1a3f6f;
+    --accent-light: #e4ecf7;
+    --accent-2: #b04a1a;
+    --accent-2-light: #faeee7;
+    --teal: #0f6e56;
+    --teal-light: #e1f5ee;
+    --line: rgba(15,17,23,0.12);
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'Outfit', system-ui, sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(245,243,238,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: var(--serif); font-size: 1.1rem; color: var(--ink);
+    text-decoration: none; letter-spacing: -0.02em;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--ink-3); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 60px;
+  }
+  .hero-left {
+    padding: 6rem 3rem 4rem 5vw;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent-2); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block; width: 32px; height: 1px; background: var(--accent-2);
+  }
+  .hero-name {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 5vw, 5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  .hero-name em { font-style: italic; color: var(--accent); }
+  .hero-desc {
+    font-size: 1.05rem; color: var(--ink-2); max-width: 420px;
+    margin-bottom: 2.5rem; line-height: 1.75;
+  }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2.5rem; }
+  .tag {
+    font-family: var(--mono); font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.04em; padding: 0.35rem 0.85rem;
+    border-radius: 100px; border: 1px solid;
+  }
+  .tag-blue { background: var(--accent-light); color: var(--accent); border-color: rgba(26,63,111,0.2); }
+  .tag-orange { background: var(--accent-2-light); color: var(--accent-2); border-color: rgba(176,74,26,0.2); }
+  .tag-green { background: var(--teal-light); color: var(--teal); border-color: rgba(15,110,86,0.2); }
+  .hero-links { display: flex; gap: 1rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--sans); font-size: 0.875rem; font-weight: 500;
+    padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none;
+    transition: all 0.2s; border: 1.5px solid transparent;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #14305a; }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn-ghost:hover { background: var(--surface-2); }
+
+  .hero-right {
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .hero-visual {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+    padding: 3rem;
+  }
+  .stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; max-width: 320px; }
+  .stat-card {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 12px; padding: 1.25rem;
+  }
+  .stat-num {
+    font-family: var(--serif); font-size: 2rem; color: #fff; line-height: 1;
+    margin-bottom: 0.35rem;
+  }
+  .stat-label { font-size: 0.72rem; color: rgba(255,255,255,0.65); font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; }
+  .hero-badge {
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 100px; padding: 0.6rem 1.2rem;
+    font-family: var(--mono); font-size: 0.75rem; color: rgba(255,255,255,0.8);
+    text-align: center;
+  }
+  .bg-circle {
+    position: absolute; border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .bg-circle-1 { width: 500px; height: 500px; top: -150px; right: -200px; }
+  .bg-circle-2 { width: 300px; height: 300px; bottom: -80px; left: -80px; }
+
+  /* SECTIONS */
+  section { padding: 6rem 5vw; }
+  section:nth-child(even) { background: var(--white); }
+
+  .section-label {
+    font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent-2); margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::before { content: ''; display: block; width: 24px; height: 1px; background: currentColor; }
+
+  .section-title {
+    font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 2.8rem);
+    line-height: 1.15; letter-spacing: -0.02em; color: var(--ink);
+    margin-bottom: 3rem;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  /* RESEARCH */
+  .research-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .research-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; padding: 2rem; position: relative; overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .research-card:hover { transform: translateY(-3px); border-color: rgba(26,63,111,0.3); }
+  .research-card .card-accent {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent);
+  }
+  .research-card .card-accent.orange { background: var(--accent-2); }
+  .research-card h3 {
+    font-family: var(--serif); font-size: 1.25rem; color: var(--ink);
+    margin-bottom: 0.75rem; line-height: 1.3;
+  }
+  .research-card p { font-size: 0.9rem; color: var(--ink-2); line-height: 1.7; margin-bottom: 1rem; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .chip {
+    font-family: var(--mono); font-size: 0.68rem; padding: 0.25rem 0.65rem;
+    border-radius: 6px; background: var(--accent-light); color: var(--accent); border: none;
+  }
+  .chip.orange { background: var(--accent-2-light); color: var(--accent-2); }
+  .collab-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem; color: var(--teal); font-weight: 500;
+    background: var(--teal-light); padding: 0.3rem 0.8rem; border-radius: 100px;
+    margin-bottom: 1rem;
+  }
+  .collab-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+
+  /* EDUCATION */
+  .edu-timeline { position: relative; }
+  .edu-timeline::before {
+    content: ''; position: absolute; left: 120px; top: 0; bottom: 0;
+    width: 1px; background: var(--line);
+  }
+  .edu-item {
+    display: grid; grid-template-columns: 120px 1fr;
+    gap: 2rem; margin-bottom: 2.5rem; position: relative;
+  }
+  .edu-item::before {
+    content: ''; position: absolute; left: 120px; top: 12px;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent); border: 2px solid var(--white);
+    transform: translateX(-50%); box-shadow: 0 0 0 1px var(--accent);
+  }
+  .edu-year {
+    font-family: var(--mono); font-size: 0.75rem; color: var(--ink-3);
+    text-align: right; padding-top: 2px;
+  }
+  .edu-body { padding-left: 1.5rem; }
+  .edu-degree { font-family: var(--serif); font-size: 1.2rem; color: var(--ink); margin-bottom: 0.25rem; }
+  .edu-inst { font-size: 0.9rem; font-weight: 500; color: var(--accent); margin-bottom: 0.35rem; }
+  .edu-detail { font-size: 0.85rem; color: var(--ink-3); }
+  .cgpa-badge {
+    display: inline-block; font-family: var(--mono); font-size: 0.72rem;
+    background: var(--accent-light); color: var(--accent); padding: 0.2rem 0.7rem;
+    border-radius: 6px; margin-top: 0.5rem;
+  }
+
+  /* SKILLS */
+  .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .skill-block {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; padding: 1.5rem;
+  }
+  .skill-block h4 {
+    font-size: 0.8rem; font-family: var(--mono); letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-3); margin-bottom: 1rem;
+  }
+  .skill-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .skill-list li {
+    font-size: 0.9rem; color: var(--ink-2);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .skill-list li::before { content: '→'; color: var(--accent-2); font-size: 0.8rem; }
+
+  /* EQUIPMENT */
+  .equip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .equip-card {
+    border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem 1.5rem;
+    background: var(--white);
+  }
+  .equip-card h4 { font-size: 0.85rem; font-weight: 600; color: var(--ink); margin-bottom: 0.75rem; }
+  .equip-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .equip-card ul li { font-size: 0.82rem; color: var(--ink-2); padding-left: 1rem; position: relative; }
+  .equip-card ul li::before { content: '·'; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
+
+  /* CONFERENCES */
+  .conf-list { display: flex; flex-direction: column; gap: 1.25rem; }
+  .conf-item {
+    display: flex; gap: 1.5rem; align-items: flex-start;
+    padding: 1.5rem; background: var(--surface); border-radius: 12px;
+    border: 1px solid var(--line);
+  }
+  .conf-num {
+    font-family: var(--serif); font-size: 2rem; color: var(--line);
+    min-width: 40px; line-height: 1;
+  }
+  .conf-title { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 0.35rem; }
+  .conf-venue { font-size: 0.82rem; color: var(--ink-3); font-family: var(--mono); }
+
+  /* CERTS */
+  .cert-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .cert-card {
+    border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem;
+    background: var(--white); position: relative; overflow: hidden;
+  }
+  .cert-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--teal));
+  }
+  .cert-card h4 { font-size: 0.875rem; font-weight: 500; color: var(--ink); margin-bottom: 0.4rem; line-height: 1.4; }
+  .cert-card p { font-size: 0.78rem; color: var(--ink-3); font-family: var(--mono); }
+
+  /* CONTACT */
+  .contact-section {
+    background: var(--ink) !important;
+    color: #fff;
+  }
+  .contact-section .section-label { color: rgba(255,255,255,0.5); }
+  .contact-section .section-label::before { background: rgba(255,255,255,0.5); }
+  .contact-section .section-title { color: #fff; }
+  .contact-section .section-title em { color: rgba(255,255,255,0.5); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+  .contact-info p { color: rgba(255,255,255,0.65); margin-bottom: 2rem; line-height: 1.8; }
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+  .contact-link {
+    display: flex; align-items: center; gap: 1rem;
+    color: rgba(255,255,255,0.8); text-decoration: none;
+    font-size: 0.9rem; transition: color 0.2s;
+  }
+  .contact-link:hover { color: #fff; }
+  .contact-link-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .contact-right {
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .iitm-affil {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 2rem;
+  }
+  .iitm-affil h4 { font-family: var(--serif); font-size: 1.2rem; color: #fff; margin-bottom: 0.75rem; }
+  .iitm-affil p { font-size: 0.85rem; color: rgba(255,255,255,0.55); line-height: 1.7; }
+
+  footer {
+    background: #080a0f; padding: 1.5rem 5vw;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  footer p { font-size: 0.78rem; color: rgba(255,255,255,0.3); font-family: var(--mono); }
+
+  /* ANIMATIONS */
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { min-height: 320px; }
+    .research-grid, .skills-grid, .cert-grid { grid-template-columns: 1fr; }
+    .equip-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .edu-timeline::before { left: 80px; }
+    .edu-item { grid-template-columns: 80px 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Ujjwal Kumar</a>
+  <ul class="nav-links">
+    <li><a href="#research">Research</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#conferences">Conferences</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="padding:0;">
+  <div class="hero-left">
+    <div class="hero-eyebrow">PhD Candidate · IIT Madras</div>
+    <h1 class="hero-name">Ujjwal<br><em>Kumar</em></h1>
+    <p class="hero-desc">Exploring the frontier of fluid dynamics — parametric sloshing, cryogenic propellant behavior, and multiphase instabilities in collaboration with ISRO's LPSC.</p>
+    <div class="hero-tags">
+      <span class="tag tag-blue">Faraday Instability</span>
+      <span class="tag tag-orange">Cryogenic Fluids</span>
+      <span class="tag tag-green">Propellant Sloshing</span>
+      <span class="tag tag-blue">CFD / ANSYS Fluent</span>
+      <span class="tag tag-orange">High-Speed Imaging</span>
+    </div>
+    <div class="hero-links">
+      <a href="mailto:me23d017@smail.iitm.ac.in" class="btn btn-primary">✉ Get in Touch</a>
+      <a href="https://linkedin.com/in/aaryazujjwal" target="_blank" class="btn btn-ghost">LinkedIn →</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="hero-visual">
+      <div class="hero-badge">Mechanical Engineering · CGPA 8.24/10</div>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-num">25–300</div>
+          <div class="stat-label">Hz Excitation Range</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">60K</div>
+          <div class="stat-label">fps High-Speed Camera</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Shaker Systems</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">LPSC</div>
+          <div class="stat-label">ISRO Collaboration</div>
+        </div>
+      </div>
+      <div class="hero-badge">Currently: 3rd Year PhD · IIT Madras HPC</div>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section id="research">
+  <div class="section-label">Research</div>
+  <div class="section-title">Current & Past <em>Work</em></div>
+  <div class="research-grid">
+    <div class="research-card fade-in">
+      <div class="card-accent"></div>
+      <div class="collab-badge"><span class="collab-dot"></span> LPSC–ISRO Collaboration · Ongoing</div>
+      <h3>Parametric Sloshing & Propellant Dynamics</h3>
+      <p>Investigating sloshing instabilities in spacecraft propellant tanks via high-frequency excitation (25–300 Hz). Studying droplet ejection, interface instability, and gravity–capillary transitions using cryogenic (LN₂) and synthetic fluids.</p>
+      <div class="card-tags">
+        <span class="chip">Faraday Waves</span>
+        <span class="chip">LN₂ Cryogenics</span>
+        <span class="chip">ANSYS Fluent</span>
+        <span class="chip">High-Speed Imaging</span>
+        <span class="chip">Multiphase Flow</span>
+      </div>
+    </div>
+    <div class="research-card fade-in">
+      <div class="card-accent orange"></div>
+      <h3>High-Speed Helium Expansion Turbine</h3>
+      <p>Design and performance analysis of helium expansion turbines for cryogenic systems at IPR Gandhinagar. Focused on rotor dynamics, bearing systems, thermodynamic optimization, and ultra-high vacuum environments.</p>
+      <div class="card-tags">
+        <span class="chip orange">IPR Gandhinagar</span>
+        <span class="chip orange">2022–23</span>
+        <span class="chip orange">Rotor Dynamics</span>
+        <span class="chip orange">He Liquefier</span>
+        <span class="chip orange">UHV Systems</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-label">Education</div>
+  <div class="section-title">Academic <em>Journey</em></div>
+  <div class="edu-timeline">
+    <div class="edu-item fade-in">
+      <div class="edu-year">2023–<br>Present</div>
+      <div class="edu-body">
+        <div class="edu-degree">PhD, Mechanical Engineering</div>
+        <div class="edu-inst">Indian Institute of Technology Madras (IIT Madras)</div>
+        <div class="edu-detail">Parametric sloshing · Cryogenic fluid dynamics · Multiphase instability</div>
+        <span class="cgpa-badge">CGPA 8.24 / 10</span>
+      </div>
+    </div>
+    <div class="edu-item fade-in">
+      <div class="edu-year">2021–23</div>
+      <div class="edu-body">
+        <div class="edu-degree">M.Tech, Cryogenic & Vacuum Technology</div>
+        <div class="edu-inst">NIT Rourkela</div>
+        <div class="edu-detail">Thesis: High-speed helium gas expansion turbine</div>
+        <span class="cgpa-badge">CGPA 8.76 / 10</span>
+      </div>
+    </div>
+    <div class="edu-item fade-in">
+      <div class="edu-year">2018–21</div>
+      <div class="edu-body">
+        <div class="edu-degree">B.Tech, Mechanical Engineering</div>
+        <div class="edu-inst">Aryabhatta Knowledge University, Patna</div>
+        <div class="edu-detail">Project: Study on Ocean Thermal Energy Conversion</div>
+        <span class="cgpa-badge">CGPA 8.42 / 10</span>
+      </div>
+    </div>
+    <div class="edu-item fade-in">
+      <div class="edu-year">2015–18</div>
+      <div class="edu-body">
+        <div class="edu-degree">Diploma, Mechanical Engineering</div>
+        <div class="edu-inst">State Board of Technical Education, Bihar</div>
+        <span class="cgpa-badge">75.96%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS & EQUIPMENT -->
+<section id="skills">
+  <div class="section-label">Capabilities</div>
+  <div class="section-title">Technical <em>Expertise</em></div>
+  <div class="skills-grid" style="margin-bottom: 2rem;">
+    <div class="skill-block fade-in">
+      <h4>CFD & Simulation</h4>
+      <ul class="skill-list">
+        <li>ANSYS Fluent</li>
+        <li>ICEM CFD</li>
+        <li>MATLAB</li>
+        <li>IIT Madras HPC Cluster</li>
+      </ul>
+    </div>
+    <div class="skill-block fade-in">
+      <h4>Programming</h4>
+      <ul class="skill-list">
+        <li>MATLAB (FFT, signal analysis)</li>
+        <li>Python (Deep learning, data)</li>
+        <li>C</li>
+      </ul>
+    </div>
+    <div class="skill-block fade-in">
+      <h4>Core Domains</h4>
+      <ul class="skill-list">
+        <li>Multiphase flow</li>
+        <li>Heat transfer</li>
+        <li>Fluid instability</li>
+        <li>Cryogenic systems</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-bottom:1.25rem;">Instrumentation</div>
+  <div class="equip-grid">
+    <div class="equip-card fade-in">
+      <h4>🔬 Shaker Systems</h4>
+      <ul>
+        <li>1-ton SDyn shaker (Spandon controller + Crystal Instruments DAQ)</li>
+        <li>1-ton Despl shaker (Data Physics 7000 + NI BNC-2110)</li>
+        <li>440 N Dynalabs shaker (VR controller)</li>
+        <li>Keysight function generator for complex excitation signals</li>
+      </ul>
+    </div>
+    <div class="equip-card fade-in">
+      <h4>📷 High-Speed Diagnostics</h4>
+      <ul>
+        <li>Photron Mini UX100 (up to 60,000 fps)</li>
+        <li>Dual-camera sync via external triggering</li>
+        <li>Keysight 34972A (TC, RTD, pressure sensors)</li>
+        <li>Alicat flow controller</li>
+      </ul>
+    </div>
+    <div class="equip-card fade-in">
+      <h4>⚡ Sensing & Vibration</h4>
+      <ul>
+        <li>Uniaxial accelerometers: Dytran, PCB Piezotronics, Kemo</li>
+        <li>NI, Crystal Instruments, Keysight DAQ integration</li>
+        <li>Calibration, signal conditioning, noise reduction</li>
+        <li>FFT & frequency-domain analysis</li>
+      </ul>
+    </div>
+    <div class="equip-card fade-in">
+      <h4>🧊 Vacuum & Cryogenics</h4>
+      <ul>
+        <li>HHV FD20 high vacuum pump</li>
+        <li>Ultra-high vacuum & molecular turbo pumps</li>
+        <li>Helium liquefier systems</li>
+        <li>Cryogenic fluid handling (LN₂, Flutec PP1)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONFERENCES -->
+<section id="conferences">
+  <div class="section-label">Publications</div>
+  <div class="section-title">Conference <em>Presentations</em></div>
+  <div class="conf-list">
+    <div class="conf-item fade-in">
+      <div class="conf-num">01</div>
+      <div>
+        <div class="conf-title">High-Frequency Faraday Instability in a Small Circular Container</div>
+        <div class="conf-venue">International Aerospace and Engineering System</div>
+      </div>
+    </div>
+    <div class="conf-item fade-in">
+      <div class="conf-num">02</div>
+      <div>
+        <div class="conf-title">Pattern Evolution in Vertically Oscillated Upright Cylindrical Containers</div>
+        <div class="conf-venue">International/National Conference on Fluid Mechanics and Fluid Power (FMFP)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section>
+  <div class="section-label">Training</div>
+  <div class="section-title">Certifications & <em>Courses</em></div>
+  <div class="cert-grid">
+    <div class="cert-card fade-in">
+      <h4>Introduction to Deep Learning: Theory, Applications & Implementations</h4>
+      <p>iHUB DivyaSampark, IIT Roorkee · May–Aug 2024</p>
+    </div>
+    <div class="cert-card fade-in">
+      <h4>Cryogenic Hydrogen Technology</h4>
+      <p>NPTEL, IIT Kharagpur · Feb–Apr 2024</p>
+    </div>
+    <div class="cert-card fade-in">
+      <h4>Internet of Things</h4>
+      <p>Internshala / Bhagalpur College of Engineering · Jun–Jul 2020</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="section-label">Contact</div>
+  <div class="section-title">Let's <em>Connect</em></div>
+  <div class="contact-grid">
+    <div class="contact-info">
+      <p>I'm always open to research collaborations, technical discussions, and opportunities in fluid dynamics, cryogenics, and aerospace propulsion. Feel free to reach out.</p>
+      <div class="contact-links">
+        <a href="mailto:me23d017@smail.iitm.ac.in" class="contact-link">
+          <div class="contact-link-icon">✉</div>
+          me23d017@smail.iitm.ac.in
+        </a>
+        <a href="tel:+919631000700" class="contact-link">
+          <div class="contact-link-icon">📞</div>
+          +91 9631 000 700
+        </a>
+        <a href="https://linkedin.com/in/aaryazujjwal" target="_blank" class="contact-link">
+          <div class="contact-link-icon">in</div>
+          linkedin.com/in/aaryazujjwal
+        </a>
+      </div>
+    </div>
+    <div class="contact-right">
+      <div class="iitm-affil">
+        <h4>IIT Madras</h4>
+        <p>Department of Mechanical Engineering<br>Chennai, Tamil Nadu — 600036<br><br>
+        Research group working on experimental fluid dynamics with active collaboration with LPSC, ISRO on spacecraft propellant management.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 Ujjwal Kumar · PhD Candidate, IIT Madras</p>
+  <p>me23d017@smail.iitm.ac.in</p>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
