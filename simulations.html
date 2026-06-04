@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulations — Ujjwal Kumar</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f1117;--ink-2:#3a3d4a;--ink-3:#6b7080;
+  --surface:#0a0d14;--surface-2:#111520;--surface-3:#181d2e;
+  --accent:#4a9eff;--accent-dim:#1a3f6f;
+  --accent-2:#ff7b4a;--teal:#3dd9a4;--gold:#ffd166;
+  --line:rgba(255,255,255,0.08);
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'Outfit',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--surface);color:#e8eaf0;font-size:16px;line-height:1.7;overflow-x:hidden}
+
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(10,13,20,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;
+}
+.nav-logo{font-family:var(--serif);font-size:1.1rem;color:#e8eaf0;text-decoration:none}
+.nav-back{font-size:0.8rem;font-family:var(--mono);color:rgba(255,255,255,0.45);text-decoration:none;
+  display:flex;align-items:center;gap:0.5rem;transition:color 0.2s}
+.nav-back:hover{color:var(--accent)}
+.nav-links{display:flex;gap:1.5rem;list-style:none}
+.nav-links a{font-size:0.8rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;
+  color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.2s;font-family:var(--mono)}
+.nav-links a:hover,.nav-links a.active{color:var(--accent)}
+
+/* HERO */
+.page-hero{padding:7rem 5vw 3rem;text-align:center}
+.page-eyebrow{font-family:var(--mono);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--accent-2);margin-bottom:1rem;opacity:0.8}
+.page-title{font-family:var(--serif);font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;
+  letter-spacing:-0.02em;margin-bottom:1rem}
+.page-title em{font-style:italic;color:var(--accent)}
+.page-desc{font-size:0.95rem;color:rgba(255,255,255,0.5);max-width:560px;margin:0 auto 2rem}
+
+/* TAB SWITCHER */
+.tab-bar{display:flex;justify-content:center;gap:0.5rem;margin-bottom:3rem}
+.tab-btn{
+  font-family:var(--mono);font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase;
+  padding:0.6rem 1.5rem;border-radius:100px;border:1px solid var(--line);
+  background:transparent;color:rgba(255,255,255,0.4);cursor:pointer;transition:all 0.2s
+}
+.tab-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+.tab-btn:hover:not(.active){border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.7)}
+
+/* SIM CONTAINER */
+.sim-panel{display:none;padding:0 5vw 5rem}
+.sim-panel.active{display:block}
+
+.sim-layout{display:grid;grid-template-columns:1fr 320px;gap:2rem;align-items:start}
+.canvas-wrap{
+  background:var(--surface-2);border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;position:relative
+}
+canvas{display:block;width:100%;height:auto}
+.canvas-label{
+  position:absolute;top:1rem;left:1rem;
+  font-family:var(--mono);font-size:0.7rem;letter-spacing:0.08em;
+  color:rgba(255,255,255,0.3);text-transform:uppercase
+}
+.canvas-status{
+  position:absolute;bottom:1rem;left:1rem;right:1rem;
+  display:flex;gap:1rem;flex-wrap:wrap
+}
+.status-pill{
+  font-family:var(--mono);font-size:0.68rem;
+  background:rgba(0,0,0,0.5);border:1px solid var(--line);
+  border-radius:6px;padding:0.3rem 0.7rem;color:rgba(255,255,255,0.6)
+}
+.status-pill span{color:var(--accent);font-weight:500}
+
+/* CONTROLS */
+.controls{display:flex;flex-direction:column;gap:1rem}
+.ctrl-card{
+  background:var(--surface-3);border:1px solid var(--line);border-radius:12px;padding:1.25rem
+}
+.ctrl-card h4{font-size:0.72rem;font-family:var(--mono);letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);margin-bottom:1rem}
+.ctrl-row{margin-bottom:0.9rem}
+.ctrl-row:last-child{margin-bottom:0}
+.ctrl-row label{display:flex;justify-content:space-between;align-items:center;
+  font-size:0.8rem;color:rgba(255,255,255,0.6);margin-bottom:0.35rem}
+.ctrl-row label span{font-family:var(--mono);font-size:0.75rem;color:var(--accent)}
+input[type=range]{
+  width:100%;-webkit-appearance:none;height:3px;
+  background:rgba(255,255,255,0.1);border-radius:2px;outline:none;cursor:pointer
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:var(--accent);cursor:pointer;transition:transform 0.15s
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
+.btn-sim{
+  width:100%;padding:0.75rem;border-radius:8px;border:none;cursor:pointer;
+  font-family:var(--sans);font-size:0.875rem;font-weight:600;letter-spacing:0.03em;
+  transition:all 0.2s
+}
+.btn-launch{background:var(--accent);color:#000}
+.btn-launch:hover{background:#6ab4ff}
+.btn-reset{background:var(--surface-2);color:rgba(255,255,255,0.5);border:1px solid var(--line);margin-top:0.5rem}
+.btn-reset:hover{background:var(--surface-3)}
+
+.info-card{
+  background:var(--surface-3);border:1px solid var(--line);border-radius:12px;padding:1.25rem
+}
+.info-card h4{font-size:0.72rem;font-family:var(--mono);letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);margin-bottom:0.75rem}
+.info-row{display:flex;justify-content:space-between;padding:0.4rem 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.8rem}
+.info-row:last-child{border-bottom:none}
+.info-row .k{color:rgba(255,255,255,0.45)}
+.info-row .v{font-family:var(--mono);color:var(--teal);font-size:0.75rem}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1rem}
+.leg-item{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:rgba(255,255,255,0.5)}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.leg-line{width:24px;height:2px;flex-shrink:0}
+
+/* SECTION TITLES */
+.sim-header{margin-bottom:1.5rem}
+.sim-header h2{font-family:var(--serif);font-size:1.8rem;color:#e8eaf0;margin-bottom:0.5rem}
+.sim-header p{font-size:0.875rem;color:rgba(255,255,255,0.45);max-width:600px}
+
+/* TAGS */
+.concept-tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem}
+.ctag{font-family:var(--mono);font-size:0.68rem;padding:0.25rem 0.7rem;border-radius:6px;
+  background:rgba(74,158,255,0.1);color:var(--accent);border:1px solid rgba(74,158,255,0.2)}
+
+@media(max-width:900px){
+  .sim-layout{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-back">← Back to Portfolio</a>
+  <a href="#" class="nav-logo">Simulations</a>
+  <ul class="nav-links">
+    <li><a href="#" class="active" onclick="switchTab('tli',this)">Trans-Lunar</a></li>
+    <li><a href="#" onclick="switchTab('halo',this)">Halo Orbit</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <div class="page-eyebrow">Interactive Simulations</div>
+  <h1 class="page-title">Space <em>Trajectory</em> Lab</h1>
+  <p class="page-desc">Physics-based orbital mechanics simulations — relevant to spacecraft propellant management and mission design. Built with real astrodynamics equations.</p>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('tli',this)">🚀 Trans-Lunar Injection</button>
+    <button class="tab-btn" onclick="switchTab('halo',this)">🌀 Halo Orbit (CR3BP)</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ TLI SIM ═══ -->
+<div class="sim-panel active" id="panel-tli">
+  <div class="sim-header">
+    <h2>Trans-Lunar Injection Trajectory</h2>
+    <p>Simulates a spacecraft's journey from Low Earth Orbit (LEO) to the Moon using Newtonian gravity from Earth and Moon. Tune the burn ΔV, departure angle, and watch the trajectory evolve in real-time.</p>
+    <div class="concept-tags">
+      <span class="ctag">N-Body Gravity</span>
+      <span class="ctag">Hohmann Transfer</span>
+      <span class="ctag">ΔV Budget</span>
+      <span class="ctag">Sphere of Influence</span>
+      <span class="ctag">Propellant Management</span>
+    </div>
+  </div>
+
+  <div class="sim-layout">
+    <div class="canvas-wrap">
+      <canvas id="tliCanvas" width="760" height="560"></canvas>
+      <div class="canvas-label">Earth–Moon System · Not to scale</div>
+      <div class="canvas-status">
+        <div class="status-pill">Time: <span id="tli-time">0</span> hrs</div>
+        <div class="status-pill">Distance: <span id="tli-dist">0</span> km</div>
+        <div class="status-pill">Speed: <span id="tli-speed">0</span> km/s</div>
+        <div class="status-pill">Phase: <span id="tli-phase">Waiting</span></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl-card">
+        <h4>Mission Parameters</h4>
+        <div class="ctrl-row">
+          <label>Burn ΔV <span id="dv-val">3.15 km/s</span></label>
+          <input type="range" id="dv-slider" min="2.8" max="3.5" step="0.01" value="3.15">
+        </div>
+        <div class="ctrl-row">
+          <label>Departure Angle <span id="ang-val">0°</span></label>
+          <input type="range" id="ang-slider" min="-30" max="30" step="1" value="0">
+        </div>
+        <div class="ctrl-row">
+          <label>Sim Speed <span id="spd-val">1×</span></label>
+          <input type="range" id="spd-slider" min="1" max="20" step="1" value="6">
+        </div>
+        <button class="btn-sim btn-launch" id="tli-launch-btn" onclick="tliLaunch()">▶ Launch</button>
+        <button class="btn-sim btn-reset" onclick="tliReset()">↺ Reset</button>
+      </div>
+
+      <div class="info-card">
+        <h4>Physics Notes</h4>
+        <div class="info-row"><span class="k">LEO altitude</span><span class="v">~400 km</span></div>
+        <div class="info-row"><span class="k">TLI ΔV needed</span><span class="v">~3.1–3.2 km/s</span></div>
+        <div class="info-row"><span class="k">Transit time</span><span class="v">~3 days</span></div>
+        <div class="info-row"><span class="k">Moon distance</span><span class="v">384,400 km</span></div>
+        <div class="info-row"><span class="k">Propellant link</span><span class="v">Sloshing in tanks</span></div>
+      </div>
+
+      <div class="info-card">
+        <h4>Legend</h4>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-dot" style="background:#4a9eff"></div>Earth</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#aaaaaa"></div>Moon</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#ffd166"></div>Spacecraft</div>
+          <div class="leg-item"><div class="leg-line" style="background:#ffd166;opacity:0.5"></div>Trajectory</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#3dd9a4"></div>Capture orbit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ HALO SIM ═══ -->
+<div class="sim-panel" id="panel-halo">
+  <div class="sim-header">
+    <h2>Halo Orbit — CR3BP Model</h2>
+    <p>Computes a halo orbit around the Earth–Moon L2 Lagrange point using the Circular Restricted 3-Body Problem. Spacecraft here require minimal station-keeping — critical for Gateway, Chandrayaan-4, and future lunar missions.</p>
+    <div class="concept-tags">
+      <span class="ctag">CR3BP</span>
+      <span class="ctag">Lagrange Points</span>
+      <span class="ctag">Halo / Lyapunov Orbits</span>
+      <span class="ctag">Station-Keeping ΔV</span>
+      <span class="ctag">Lunar Gateway</span>
+    </div>
+  </div>
+
+  <div class="sim-layout">
+    <div class="canvas-wrap">
+      <canvas id="haloCanvas" width="760" height="560"></canvas>
+      <div class="canvas-label">CR3BP Rotating Frame · Earth–Moon L2</div>
+      <div class="canvas-status">
+        <div class="status-pill">Period: <span id="h-period">14.0</span> days</div>
+        <div class="status-pill">Az amplitude: <span id="h-az">0</span> km</div>
+        <div class="status-pill">Frame: <span id="h-frame">Rotating</span></div>
+        <div class="status-pill">Orbit: <span id="h-orb">Northern Halo</span></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl-card">
+        <h4>Orbit Parameters</h4>
+        <div class="ctrl-row">
+          <label>Az Amplitude <span id="az-val">8000 km</span></label>
+          <input type="range" id="az-slider" min="2000" max="30000" step="500" value="8000">
+        </div>
+        <div class="ctrl-row">
+          <label>Ax Amplitude <span id="ax-val">12000 km</span></label>
+          <input type="range" id="ax-slider" min="4000" max="40000" step="500" value="12000">
+        </div>
+        <div class="ctrl-row">
+          <label>Sim Speed <span id="hspd-val">1×</span></label>
+          <input type="range" id="hspd-slider" min="1" max="30" step="1" value="10">
+        </div>
+        <div class="ctrl-row">
+          <label style="justify-content:flex-start;gap:0.75rem">
+            <input type="checkbox" id="show-inertial" onchange="haloToggleFrame()" style="width:auto">
+            Show inertial frame
+          </label>
+        </div>
+        <button class="btn-sim btn-launch" id="halo-btn" onclick="haloToggle()">▶ Run Orbit</button>
+        <button class="btn-sim btn-reset" onclick="haloReset()">↺ Reset</button>
+      </div>
+
+      <div class="info-card">
+        <h4>L2 Point Data</h4>
+        <div class="info-row"><span class="k">L2 distance</span><span class="v">~61,500 km</span></div>
+        <div class="info-row"><span class="k">from Moon</span><span class="v">behind Moon</span></div>
+        <div class="info-row"><span class="k">Orbit period</span><span class="v">~14 days</span></div>
+        <div class="info-row"><span class="k">Station-keeping</span><span class="v">~2–5 m/s/yr</span></div>
+        <div class="info-row"><span class="k">Use case</span><span class="v">Lunar Gateway</span></div>
+      </div>
+
+      <div class="info-card">
+        <h4>CR3BP Equations</h4>
+        <div style="font-family:var(--mono);font-size:0.72rem;color:rgba(255,255,255,0.45);line-height:2">
+          ẍ − 2ẏ = ∂Ω/∂x<br>
+          ÿ + 2ẋ = ∂Ω/∂y<br>
+          z̈ = ∂Ω/∂z<br>
+          <span style="color:rgba(255,255,255,0.25);font-size:0.65rem">μ = 0.01215 (Earth-Moon)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── TAB SWITCHER ──────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.sim-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'tli') tliDraw();
+  if (id === 'halo') haloDraw();
+}
+
+// ════════════════════════════════════════════════════════
+// TLI SIMULATION
+// ════════════════════════════════════════════════════════
+const tliC = document.getElementById('tliCanvas');
+const tliCtx = tliC.getContext('2d');
+const W = 760, H = 560;
+
+// Scaled units: 1 unit = 50000 km
+// Earth at center, Moon at (7.688, 0) [384400 km]
+const SCALE = 50; // px per unit (1 unit = 1000 km in display)
+const CX = W * 0.38, CY = H * 0.5;
+const MOON_DIST_PX = 290;  // display px from Earth to Moon
+const EARTH_R = 18, MOON_R = 10;
+const LEO_R = 24; // LEO orbit display radius in px
+const MOON_R_REAL = 384400; // km
+const EARTH_R_REAL = 6371 + 400; // km LEO
+
+// Physics in km, km/s, seconds
+const GM_E = 398600;   // km³/s²
+const GM_M = 4902.8;
+const MOON_DIST = 384400; // km
+
+let tliState = {
+  running: false,
+  launched: false,
+  x: 0, y: 0, vx: 0, vy: 0,
+  trail: [],
+  t: 0,
+  captured: false,
+  moonAngle: 0,  // moon position angle (for animation)
+  frameId: null
+};
+
+function getMoonPos(t) {
+  // Moon orbits Earth in ~27.3 days, moves slightly during 3-day transit
+  const T_MOON = 27.3 * 86400; // seconds
+  const a = tliState.moonAngle + (2 * Math.PI * t / T_MOON);
+  return { x: MOON_DIST * Math.cos(a), y: MOON_DIST * Math.sin(a) };
+}
+
+function getMoonDisplay(t) {
+  const T_MOON = 27.3 * 86400;
+  const a = tliState.moonAngle + (2 * Math.PI * t / T_MOON);
+  return {
+    x: CX + MOON_DIST_PX * Math.cos(a),
+    y: CY + MOON_DIST_PX * Math.sin(a)
+  };
+}
+
+function worldToDisplay(x, y) {
+  return {
+    px: CX + (x / MOON_DIST) * MOON_DIST_PX,
+    py: CY - (y / MOON_DIST) * MOON_DIST_PX
+  };
+}
+
+function tliDraw() {
+  tliCtx.clearRect(0, 0, W, H);
+
+  // Background stars
+  if (!tliC._stars) {
+    tliC._stars = [];
+    for (let i = 0; i < 180; i++) {
+      tliC._stars.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.2 + 0.2, a: Math.random() });
+    }
+  }
+  tliC._stars.forEach(s => {
+    tliCtx.beginPath();
+    tliCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    tliCtx.fillStyle = `rgba(255,255,255,${s.a * 0.6})`;
+    tliCtx.fill();
+  });
+
+  const moonD = getMoonDisplay(tliState.t);
+
+  // Moon SOI circle (sphere of influence ~66000 km)
+  const soiR = (66000 / MOON_DIST) * MOON_DIST_PX;
+  tliCtx.beginPath();
+  tliCtx.arc(moonD.x, moonD.y, soiR, 0, Math.PI * 2);
+  tliCtx.strokeStyle = 'rgba(170,170,170,0.12)';
+  tliCtx.setLineDash([4, 6]);
+  tliCtx.lineWidth = 1;
+  tliCtx.stroke();
+  tliCtx.setLineDash([]);
+
+  // LEO orbit
+  tliCtx.beginPath();
+  tliCtx.arc(CX, CY, LEO_R, 0, Math.PI * 2);
+  tliCtx.strokeStyle = 'rgba(74,158,255,0.2)';
+  tliCtx.lineWidth = 1;
+  tliCtx.stroke();
+
+  // Trajectory trail
+  if (tliState.trail.length > 1) {
+    tliCtx.beginPath();
+    const p0 = worldToDisplay(tliState.trail[0].x, tliState.trail[0].y);
+    tliCtx.moveTo(p0.px, p0.py);
+    for (let i = 1; i < tliState.trail.length; i++) {
+      const p = worldToDisplay(tliState.trail[i].x, tliState.trail[i].y);
+      tliCtx.lineTo(p.px, p.py);
+    }
+    tliCtx.strokeStyle = 'rgba(255,209,102,0.55)';
+    tliCtx.lineWidth = 1.5;
+    tliCtx.stroke();
+  }
+
+  // Earth glow
+  const eg = tliCtx.createRadialGradient(CX, CY, EARTH_R * 0.5, CX, CY, EARTH_R * 2.5);
+  eg.addColorStop(0, 'rgba(74,158,255,0.3)');
+  eg.addColorStop(1, 'rgba(74,158,255,0)');
+  tliCtx.beginPath();
+  tliCtx.arc(CX, CY, EARTH_R * 2.5, 0, Math.PI * 2);
+  tliCtx.fillStyle = eg;
+  tliCtx.fill();
+
+  // Earth
+  const eg2 = tliCtx.createRadialGradient(CX - 5, CY - 5, 2, CX, CY, EARTH_R);
+  eg2.addColorStop(0, '#6ab8ff');
+  eg2.addColorStop(0.5, '#2a6fba');
+  eg2.addColorStop(1, '#0d3d6e');
+  tliCtx.beginPath();
+  tliCtx.arc(CX, CY, EARTH_R, 0, Math.PI * 2);
+  tliCtx.fillStyle = eg2;
+  tliCtx.fill();
+
+  // Moon
+  const mg = tliCtx.createRadialGradient(moonD.x - 3, moonD.y - 3, 1, moonD.x, moonD.y, MOON_R);
+  mg.addColorStop(0, '#dddddd');
+  mg.addColorStop(1, '#666');
+  tliCtx.beginPath();
+  tliCtx.arc(moonD.x, moonD.y, MOON_R, 0, Math.PI * 2);
+  tliCtx.fillStyle = mg;
+  tliCtx.fill();
+
+  // Spacecraft
+  if (tliState.launched) {
+    const sp = worldToDisplay(tliState.x, tliState.y);
+    // Thruster glow
+    const sg = tliCtx.createRadialGradient(sp.px, sp.py, 0, sp.px, sp.py, 8);
+    sg.addColorStop(0, 'rgba(255,209,102,0.8)');
+    sg.addColorStop(1, 'rgba(255,209,102,0)');
+    tliCtx.beginPath();
+    tliCtx.arc(sp.px, sp.py, 8, 0, Math.PI * 2);
+    tliCtx.fillStyle = sg;
+    tliCtx.fill();
+    // Dot
+    tliCtx.beginPath();
+    tliCtx.arc(sp.px, sp.py, 3.5, 0, Math.PI * 2);
+    tliCtx.fillStyle = '#ffd166';
+    tliCtx.fill();
+  } else {
+    // Spacecraft on LEO
+    const dv = parseFloat(document.getElementById('dv-slider').value);
+    const ang = parseFloat(document.getElementById('ang-slider').value) * Math.PI / 180;
+    const sx = CX + LEO_R * Math.cos(-Math.PI / 2 + ang);
+    const sy = CY + LEO_R * Math.sin(-Math.PI / 2 + ang);
+    tliCtx.beginPath();
+    tliCtx.arc(sx, sy, 3.5, 0, Math.PI * 2);
+    tliCtx.fillStyle = '#ffd166';
+    tliCtx.fill();
+  }
+
+  // Labels
+  tliCtx.font = '11px DM Mono, monospace';
+  tliCtx.fillStyle = 'rgba(74,158,255,0.7)';
+  tliCtx.fillText('Earth', CX + EARTH_R + 5, CY + 4);
+  tliCtx.fillStyle = 'rgba(180,180,180,0.7)';
+  tliCtx.fillText('Moon', moonD.x + MOON_R + 5, moonD.y + 4);
+  tliCtx.fillStyle = 'rgba(170,170,170,0.35)';
+  tliCtx.fillText('Moon SOI', moonD.x + soiR - 50, moonD.y - soiR + 14);
+
+  if (tliState.captured) {
+    tliCtx.font = 'bold 13px Outfit, sans-serif';
+    tliCtx.fillStyle = '#3dd9a4';
+    tliCtx.fillText('✓ Lunar Capture!', CX + 20, CY - 80);
+  }
+
+  updateTLIStatus();
+}
+
+function updateTLIStatus() {
+  const d = Math.sqrt(tliState.x * tliState.x + tliState.y * tliState.y);
+  const v = Math.sqrt(tliState.vx * tliState.vx + tliState.vy * tliState.vy);
+  document.getElementById('tli-time').textContent = (tliState.t / 3600).toFixed(1);
+  document.getElementById('tli-dist').textContent = Math.round(d).toLocaleString();
+  document.getElementById('tli-speed').textContent = v.toFixed(2);
+
+  if (!tliState.launched) document.getElementById('tli-phase').textContent = 'LEO';
+  else if (tliState.captured) document.getElementById('tli-phase').textContent = 'Captured';
+  else {
+    const moon = getMoonPos(tliState.t);
+    const dm = Math.sqrt((tliState.x - moon.x) ** 2 + (tliState.y - moon.y) ** 2);
+    document.getElementById('tli-phase').textContent = dm < 66000 ? 'Moon SOI' : 'TLI Coast';
+  }
+}
+
+function tliLaunch() {
+  if (tliState.running) {
+    tliState.running = false;
+    document.getElementById('tli-launch-btn').textContent = '▶ Resume';
+    return;
+  }
+  if (tliState.captured) { tliReset(); return; }
+  if (!tliState.launched) {
+    const ang = parseFloat(document.getElementById('ang-slider').value) * Math.PI / 180;
+    const dv = parseFloat(document.getElementById('dv-slider').value);
+    // Start at LEO, velocity = circular + dv in prograde direction
+    const r0 = EARTH_R_REAL;
+    const v_circ = Math.sqrt(GM_E / r0);
+    // Position: top of LEO rotated by ang
+    tliState.x = r0 * Math.sin(ang);
+    tliState.y = r0 * Math.cos(ang);
+    // Prograde direction (tangential) + dv
+    const v_total = v_circ + dv;
+    tliState.vx = v_total * Math.cos(ang);
+    tliState.vy = -v_total * Math.sin(ang);
+    tliState.launched = true;
+    tliState.moonAngle = 0;
+    document.getElementById('tli-launch-btn').textContent = '⏸ Pause';
+  } else {
+    document.getElementById('tli-launch-btn').textContent = '⏸ Pause';
+  }
+  tliState.running = true;
+  tliAnimate();
+}
+
+function tliAnimate() {
+  if (!tliState.running) return;
+  const simSpeed = parseFloat(document.getElementById('spd-slider').value);
+  const dt = 30 * simSpeed; // seconds per frame
+
+  for (let step = 0; step < 3; step++) {
+    const moon = getMoonPos(tliState.t);
+    const rx = tliState.x, ry = tliState.y;
+    const rE = Math.sqrt(rx * rx + ry * ry);
+    const rmx = tliState.x - moon.x, rmy = tliState.y - moon.y;
+    const rM = Math.sqrt(rmx * rmx + rmy * rmy);
+
+    const ax = -GM_E * rx / (rE ** 3) - GM_M * rmx / (rM ** 3);
+    const ay = -GM_E * ry / (rE ** 3) - GM_M * rmy / (rM ** 3);
+
+    tliState.vx += ax * dt;
+    tliState.vy += ay * dt;
+    tliState.x += tliState.vx * dt;
+    tliState.y += tliState.vy * dt;
+    tliState.t += dt;
+
+    tliState.trail.push({ x: tliState.x, y: tliState.y });
+    if (tliState.trail.length > 2000) tliState.trail.shift();
+
+    // Capture: within 3000 km of Moon
+    if (rM < 5000 && tliState.t > 100) {
+      tliState.captured = true;
+      tliState.running = false;
+      document.getElementById('tli-launch-btn').textContent = '↺ Fly Again';
+      break;
+    }
+    // Escape or crash
+    if (rE > 500000 || rE < 6371) {
+      tliState.running = false;
+      document.getElementById('tli-launch-btn').textContent = '↺ Retry';
+      break;
+    }
+  }
+
+  tliDraw();
+  if (tliState.running) requestAnimationFrame(tliAnimate);
+}
+
+function tliReset() {
+  tliState = { running: false, launched: false, x: 0, y: 0, vx: 0, vy: 0, trail: [], t: 0, captured: false, moonAngle: 0 };
+  document.getElementById('tli-launch-btn').textContent = '▶ Launch';
+  tliDraw();
+}
+
+// Slider listeners TLI
+['dv-slider','ang-slider','spd-slider'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    document.getElementById('dv-val').textContent = parseFloat(document.getElementById('dv-slider').value).toFixed(2) + ' km/s';
+    document.getElementById('ang-val').textContent = document.getElementById('ang-slider').value + '°';
+    document.getElementById('spd-val').textContent = document.getElementById('spd-slider').value + '×';
+    if (!tliState.launched) tliDraw();
+  });
+});
+
+// ════════════════════════════════════════════════════════
+// HALO ORBIT SIMULATION (CR3BP)
+// ════════════════════════════════════════════════════════
+const haloC = document.getElementById('haloCanvas');
+const haloCtx = haloC.getContext('2d');
+const HW = 760, HH = 560;
+const HCX = HW * 0.5, HCY = HH * 0.5;
+
+// CR3BP mass ratio Earth-Moon
+const MU = 0.01215;
+// L2 position in rotating frame (approx)
+const L2_X = 1.0 + MU + 0.16117; // ~1.156 in normalized units
+// Display scale: 1 unit = 384400 km → px
+const H_SCALE = HW * 0.32;  // px per unit
+
+let haloState = {
+  running: false,
+  t: 0,
+  trail: [],
+  frameId: null,
+  showInertial: false,
+  inertialTrail: []
+};
+
+function cr3bp_accel(x, y, z) {
+  const r1 = Math.sqrt((x + MU) ** 2 + y * y + z * z);     // from Earth
+  const r2 = Math.sqrt((x - 1 + MU) ** 2 + y * y + z * z); // from Moon
+  const ax = 2 * 0 + x - (1 - MU) * (x + MU) / r1 ** 3 - MU * (x - 1 + MU) / r2 ** 3;
+  const ay = -2 * 0 + y - (1 - MU) * y / r1 ** 3 - MU * y / r2 ** 3;
+  const az = -(1 - MU) * z / r1 ** 3 - MU * z / r2 ** 3;
+  return { ax, ay, az };
+}
+
+// Generate halo orbit points analytically (first-order Lindstedt-Poincaré)
+function generateHalo(Az_km, Ax_km) {
+  // Normalized units
+  const Az = Az_km / 384400;
+  const Ax = Ax_km / 384400;
+  const omega = 2.016;  // approximate halo frequency around L2
+  const T = 2 * Math.PI / omega;
+  const N = 400;
+  const pts = [];
+  for (let i = 0; i <= N; i++) {
+    const tau = (i / N) * T * 2;
+    const x = L2_X + Ax * Math.cos(omega * tau);
+    const y = (Ax * 1.83) * Math.sin(omega * tau);
+    const z = Az * Math.cos(omega * tau + Math.PI * 0.15);
+    pts.push({ x, y, z });
+  }
+  return pts;
+}
+
+function haloToDisplay(x, y, z) {
+  // Isometric-like projection for 3D feel
+  const px = HCX + (x - L2_X) * H_SCALE + z * H_SCALE * 0.35;
+  const py = HCY - y * H_SCALE - z * H_SCALE * 0.25;
+  return { px, py };
+}
+
+function haloDraw() {
+  haloCtx.clearRect(0, 0, HW, HH);
+
+  // Stars
+  if (!haloC._stars) {
+    haloC._stars = [];
+    for (let i = 0; i < 160; i++)
+      haloC._stars.push({ x: Math.random() * HW, y: Math.random() * HH, r: Math.random() * 1.2 + 0.2, a: Math.random() * 0.5 + 0.1 });
+  }
+  haloC._stars.forEach(s => {
+    haloCtx.beginPath();
+    haloCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    haloCtx.fillStyle = `rgba(255,255,255,${s.a})`;
+    haloCtx.fill();
+  });
+
+  const Az = parseFloat(document.getElementById('az-slider').value);
+  const Ax = parseFloat(document.getElementById('ax-slider').value);
+  const pts = generateHalo(Az, Ax);
+
+  // Draw full halo orbit (ghost)
+  haloCtx.beginPath();
+  const p0d = haloToDisplay(pts[0].x, pts[0].y, pts[0].z);
+  haloCtx.moveTo(p0d.px, p0d.py);
+  for (let i = 1; i < pts.length; i++) {
+    const pd = haloToDisplay(pts[i].x, pts[i].y, pts[i].z);
+    haloCtx.lineTo(pd.px, pd.py);
+  }
+  haloCtx.strokeStyle = 'rgba(61,217,164,0.15)';
+  haloCtx.lineWidth = 1.5;
+  haloCtx.stroke();
+
+  // Axes labels
+  haloCtx.font = '10px DM Mono, monospace';
+  haloCtx.fillStyle = 'rgba(255,255,255,0.2)';
+  haloCtx.fillText('← Earth', HCX - H_SCALE * 0.98, HCY + 14);
+  haloCtx.fillText('Moon', HCX + H_SCALE * 0.52, HCY + 14);
+  haloCtx.fillText('↑ y', HCX - 18, HCY - H_SCALE * 0.65);
+
+  // Earth position (left)
+  const earthD = { px: HCX - H_SCALE, py: HCY };
+  const earthGlow = haloCtx.createRadialGradient(earthD.px, earthD.py, 6, earthD.px, earthD.py, 22);
+  earthGlow.addColorStop(0, 'rgba(74,158,255,0.3)');
+  earthGlow.addColorStop(1, 'rgba(74,158,255,0)');
+  haloCtx.beginPath();
+  haloCtx.arc(earthD.px, earthD.py, 22, 0, Math.PI * 2);
+  haloCtx.fillStyle = earthGlow;
+  haloCtx.fill();
+  haloCtx.beginPath();
+  haloCtx.arc(earthD.px, earthD.py, 11, 0, Math.PI * 2);
+  haloCtx.fillStyle = '#2a6fba';
+  haloCtx.fill();
+  haloCtx.fillStyle = 'rgba(74,158,255,0.7)';
+  haloCtx.font = '11px DM Mono, monospace';
+  haloCtx.fillText('E', earthD.px - 4, earthD.py + 4);
+
+  // Moon position (right, at x=1 in normalized)
+  const moonD = { px: HCX + H_SCALE * 0.155, py: HCY };
+  haloCtx.beginPath();
+  haloCtx.arc(moonD.px, moonD.py, 8, 0, Math.PI * 2);
+  haloCtx.fillStyle = '#888';
+  haloCtx.fill();
+  haloCtx.fillStyle = 'rgba(200,200,200,0.7)';
+  haloCtx.font = '10px DM Mono, monospace';
+  haloCtx.fillText('M', moonD.px - 4, moonD.py + 4);
+
+  // L2 point
+  const l2D = { px: HCX, py: HCY };
+  haloCtx.beginPath();
+  haloCtx.arc(l2D.px, l2D.py, 4, 0, Math.PI * 2);
+  haloCtx.fillStyle = 'rgba(255,123,74,0.6)';
+  haloCtx.fill();
+  haloCtx.fillStyle = 'rgba(255,123,74,0.8)';
+  haloCtx.font = '10px DM Mono, monospace';
+  haloCtx.fillText('L2', l2D.px + 7, l2D.py - 5);
+
+  // Trailing path (animated)
+  if (haloState.trail.length > 1) {
+    haloCtx.beginPath();
+    const tp0 = haloToDisplay(haloState.trail[0].x, haloState.trail[0].y, haloState.trail[0].z);
+    haloCtx.moveTo(tp0.px, tp0.py);
+    for (let i = 1; i < haloState.trail.length; i++) {
+      const tp = haloToDisplay(haloState.trail[i].x, haloState.trail[i].y, haloState.trail[i].z);
+      haloCtx.lineTo(tp.px, tp.py);
+    }
+    haloCtx.strokeStyle = 'rgba(61,217,164,0.7)';
+    haloCtx.lineWidth = 2;
+    haloCtx.stroke();
+
+    // Spacecraft dot at tail
+    const last = haloState.trail[haloState.trail.length - 1];
+    const ld = haloToDisplay(last.x, last.y, last.z);
+    const sg = haloCtx.createRadialGradient(ld.px, ld.py, 0, ld.px, ld.py, 9);
+    sg.addColorStop(0, 'rgba(61,217,164,0.9)');
+    sg.addColorStop(1, 'rgba(61,217,164,0)');
+    haloCtx.beginPath();
+    haloCtx.arc(ld.px, ld.py, 9, 0, Math.PI * 2);
+    haloCtx.fillStyle = sg;
+    haloCtx.fill();
+    haloCtx.beginPath();
+    haloCtx.arc(ld.px, ld.py, 3.5, 0, Math.PI * 2);
+    haloCtx.fillStyle = '#3dd9a4';
+    haloCtx.fill();
+  }
+
+  // Dimension arrows
+  if (haloState.trail.length === 0) {
+    // Show Ax arrow
+    const ax0 = haloToDisplay(L2_X - Ax/384400, 0, 0);
+    const ax1 = haloToDisplay(L2_X + Ax/384400, 0, 0);
+    haloCtx.beginPath();
+    haloCtx.moveTo(ax0.px, ax0.py);
+    haloCtx.lineTo(ax1.px, ax1.py);
+    haloCtx.strokeStyle = 'rgba(255,209,102,0.3)';
+    haloCtx.setLineDash([3,4]);
+    haloCtx.lineWidth = 1;
+    haloCtx.stroke();
+    haloCtx.setLineDash([]);
+    haloCtx.fillStyle = 'rgba(255,209,102,0.5)';
+    haloCtx.font = '10px DM Mono, monospace';
+    haloCtx.fillText('Ax = ' + Math.round(Ax) + ' km', HCX - 30, HCY + 24);
+
+    const az0d = haloToDisplay(L2_X, 0, -Az/384400);
+    const az1d = haloToDisplay(L2_X, 0, Az/384400);
+    haloCtx.beginPath();
+    haloCtx.moveTo(az0d.px, az0d.py);
+    haloCtx.lineTo(az1d.px, az1d.py);
+    haloCtx.strokeStyle = 'rgba(74,158,255,0.3)';
+    haloCtx.setLineDash([3,4]);
+    haloCtx.stroke();
+    haloCtx.setLineDash([]);
+    haloCtx.fillStyle = 'rgba(74,158,255,0.5)';
+    haloCtx.fillText('Az = ' + Math.round(Az) + ' km', HCX + 30, HCY - 20);
+  }
+
+  updateHaloStatus();
+}
+
+function updateHaloStatus() {
+  const Az = parseFloat(document.getElementById('az-slider').value);
+  document.getElementById('h-az').textContent = Math.round(Az).toLocaleString();
+  const omega = 2.016;
+  const T_days = (2 * Math.PI / omega) * (1 / (2 * Math.PI)) * 27.3 * 2;
+  document.getElementById('h-period').textContent = T_days.toFixed(1);
+}
+
+function haloAnimate() {
+  if (!haloState.running) return;
+  const Az = parseFloat(document.getElementById('az-slider').value) / 384400;
+  const Ax = parseFloat(document.getElementById('ax-slider').value) / 384400;
+  const speed = parseFloat(document.getElementById('hspd-slider').value);
+  const omega = 2.016;
+  const dt = 0.003 * speed;
+
+  haloState.t += dt;
+
+  const x = L2_X + Ax * Math.cos(omega * haloState.t);
+  const y = (Ax * 1.83) * Math.sin(omega * haloState.t);
+  const z = Az * Math.cos(omega * haloState.t + Math.PI * 0.15);
+
+  haloState.trail.push({ x, y, z });
+  const T_full = (2 * Math.PI / omega) * 2;
+  const maxPts = Math.round(T_full / dt) + 20;
+  if (haloState.trail.length > maxPts) haloState.trail.shift();
+
+  haloDraw();
+  requestAnimationFrame(haloAnimate);
+}
+
+function haloToggle() {
+  if (haloState.running) {
+    haloState.running = false;
+    document.getElementById('halo-btn').textContent = '▶ Run Orbit';
+  } else {
+    haloState.running = true;
+    document.getElementById('halo-btn').textContent = '⏸ Pause';
+    haloAnimate();
+  }
+}
+
+function haloToggleFrame() {
+  haloState.showInertial = document.getElementById('show-inertial').checked;
+  document.getElementById('h-frame').textContent = haloState.showInertial ? 'Inertial' : 'Rotating';
+  haloDraw();
+}
+
+function haloReset() {
+  haloState.running = false;
+  haloState.t = 0;
+  haloState.trail = [];
+  document.getElementById('halo-btn').textContent = '▶ Run Orbit';
+  haloDraw();
+}
+
+['az-slider','ax-slider','hspd-slider'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    document.getElementById('az-val').textContent = Math.round(document.getElementById('az-slider').value).toLocaleString() + ' km';
+    document.getElementById('ax-val').textContent = Math.round(document.getElementById('ax-slider').value).toLocaleString() + ' km';
+    document.getElementById('hspd-val').textContent = document.getElementById('hspd-slider').value + '×';
+    if (!haloState.running) haloDraw();
+  });
+});
+
+// Init
+tliDraw();
+haloDraw();
+</script>
+</body>
+</html>
